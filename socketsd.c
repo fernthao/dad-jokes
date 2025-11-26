@@ -82,9 +82,35 @@ int main (int argc, char *argv [])
 
     // read first line
     if (fgets(req, sizeof(req), csp) != NULL) {
-        // TODO: parse req (strtok on spaces) and act accordingly */
         // First token: command, second and third: possibly arguments
-        fputs("OK\n", csp);
+        if (strcmp(req, "LIST\n") == 0) {
+            fputs("list", csp);
+        }
+        else if (strcmp(req, "GET\n") == 0) {
+            fputs("get", csp);
+        }
+        else {
+            char* method = strtok(req, " ");
+            
+            if (strcmp(method, "CREATE") == 0) {
+                fputs("create\n", csp);
+                char* msg = strtok(NULL, "\n");
+                fputs(msg, csp);
+            }
+            
+            else if (strcmp(method, "EDIT") == 0) {
+                fputs("edit\n", csp);
+                char* title = strtok(NULL, " ");
+                fputs(title, csp);
+                char* msg = strtok(NULL, "\n");
+                fputs(msg, csp);
+            }
+            else if (strcmp(method, "DELETE") == 0) {
+                fputs("delete\n", csp);
+                char* title = strtok(NULL, "\n");
+                fputs(title, csp);
+            }
+        }
         fflush(csp);
     } else {
         fprintf(stderr, "no request or read error\n");
