@@ -9,9 +9,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-#define REQUIRED_ARGC 3
+#define REQUIRED_ARGC 2
 #define PORT_POS 1
-#define MSG_POS 2
 #define ERROR 1
 #define QLEN 1
 #define PROTOCOL "tcp"
@@ -19,7 +18,7 @@
 
 int usage (char *progname)
 {
-    fprintf (stderr,"usage: %s port msg\n", progname);
+    fprintf (stderr,"usage: %s port\n", progname);
     exit (ERROR);
 }
 
@@ -52,7 +51,7 @@ int main (int argc, char *argv [])
     sin.sin_port = htons ((unsigned short int) atoi (argv [PORT_POS]));
 
     /* allocate a socket */
-    /*   would be SOCK_DGRAM for UDP */
+    /* would be SOCK_DGRAM for UDP */
     sd = socket(PF_INET, SOCK_STREAM, protoinfo->p_proto);
     if (sd < 0)
         errexit("cannot create socket", NULL);
@@ -70,13 +69,31 @@ int main (int argc, char *argv [])
     sd2 = accept (sd,&addr,&addrlen);
     if (sd2 < 0)
         errexit ("error accepting connection", NULL);
-    
-    /* write message to the connection */
-    if (write (sd2,argv [MSG_POS],strlen (argv [MSG_POS])) < 0)
-        errexit ("error writing message: %s", argv [MSG_POS]);
 
-    /* close connections and exit */
+    // client socket pointer
+    FILE *csp = fdopen(sd2, "r+");
+    if (csp == NULL) {
+        close(sd2);
+        errexit ("error creating client socket pointer\n", NULL);
+    }
+
+    // use stdio to write to and read from client socket pointer
+    char req[BUFLEN];
+
+    // read first line
+    if (fgets(req, sizeof(req), csp) != NULL) {
+        // TODO: parse req (strtok on spaces) and act accordingly */
+        // First token: command, second and third: possibly arguments
+        fputs("OK\n", csp);
+        fflush(csp);
+    } else {
+        fprintf(stderr, "no request or read error\n");
+    }
+
+    // close connection
+    fclose(csp); 
+    
+    /* close listening socket and exit */
     close (sd);
-    close (sd2);
     exit (0);
 }
