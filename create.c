@@ -17,10 +17,10 @@ int create(char* joke_title, char* joke) {
     // Check if exist
     FILE * fp = fopen(filepath, "r");
     if ( fp != NULL) {
-        fprintf(stderr, "Joke title already exist");
+        fprintf(stderr, "Joke title already exist, pick a different title");
+        fclose(fp);
         return 1;
     }
-    fclose(fp);
 
     // Create file under ./jokes with the joke_title as the name
     fp = fopen(filepath, "w");
