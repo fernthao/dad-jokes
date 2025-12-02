@@ -9,9 +9,7 @@
 #include <dirent.h>
 #include <string.h>
 #include <time.h>
-
-#define BUFF_LEN 1024 // max number of chars per line in joke file
-#define JOKES_DIR "./jokes/"
+#include "constants.h"
 
 int random_joke(FILE* socket_pointer) {
     struct dirent* dir_entry;
@@ -64,8 +62,8 @@ int random_joke(FILE* socket_pointer) {
                 fprintf(stderr, "Unable to open file");
                 return 1;
             }
-            char buffer[BUFF_LEN];
-            while (fgets(buffer, BUFF_LEN, joke) != NULL) {
+            char buffer[JOKE_LINE_LENGTH];
+            while (fgets(buffer, JOKE_LINE_LENGTH, joke) != NULL) {
                 fputs(buffer, socket_pointer);
                 fputs("\n", socket_pointer);
             };

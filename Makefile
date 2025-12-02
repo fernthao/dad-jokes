@@ -6,7 +6,7 @@ TARGETS = proj5 proj5d
 
 # object files for each target
 OBJS_proj5 = proj5.o
-OBJS_proj5d = proj5d.o list.o random_joke.o create.o
+OBJS_proj5d = proj5d.o list.o random_joke.o create.o edit.o delete_joke.o
 
 all: $(TARGETS)
 
