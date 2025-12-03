@@ -24,11 +24,12 @@
 #define ARG_EDIT    0x8
 #define ARG_DELETE  0x10
 #define ARG_MESSAGE 0x20
+#define ARG_DADSAY  0x40
 
 int usage (char *progname)
 {
     fprintf(stderr, "--------------- USAGE: ---------------\n");
-    fprintf(stderr, "%s -h host -p port [-l] [-c joke_title -m joke_message] [-r] [-e joke_title -m joke_message] [-d joke_title]\n", progname);
+    fprintf(stderr, "%s -h host -p port [-l] [-c joke_title -m joke_message] [-r] [-e joke_title -m joke_message] [-d joke_title] [-s]\n", progname);
     fprintf(stderr, "   -h          server hostname/IP address\n");
     fprintf(stderr, "   -p          server port number\n");
     fprintf(stderr, "   -l          list all jokes\n");
@@ -36,6 +37,7 @@ int usage (char *progname)
     fprintf(stderr, "   -r          get random joke\n");
     fprintf(stderr, "   -e T -m M   update joke with title \'T\' with content \'M\'\n");
     fprintf(stderr, "   -d T        delete joke with title \'T\'\n");
+    fprintf(stderr, "   -s          dadsay a random joke\n");
     exit (ERROR);
 }
 
@@ -56,7 +58,7 @@ char* port = NULL;
 void parseargs(int argc, char* argv[]) {
     int opt;
 
-    while ((opt = getopt(argc, argv, "h:p:lc:re:d:m:")) != -1) {
+    while ((opt = getopt(argc, argv, "h:p:lc:re:d:m:s")) != -1) {
         switch (opt) {
             case 'h':
                 host = optarg;
@@ -85,6 +87,9 @@ void parseargs(int argc, char* argv[]) {
             case 'm':
                 cmd_line_flags |= ARG_MESSAGE;
                 joke = optarg;
+                break;
+            case 's':
+                cmd_line_flags |= ARG_DADSAY;
                 break;
             default:
                 usage(argv[0]);
@@ -165,8 +170,11 @@ int main (int argc, char *argv [])
             usage(argv[0]);
         }
         snprintf(req, sizeof(req), "DELETE %s\n", title);
-
-    } else {
+    // dadsay
+    } else if (cmd_line_flags == ARG_DADSAY) snprintf(req, sizeof(req), "DADSAY\n");
+    
+    // Error if not one of the specified operations
+    else {
         fprintf(stderr, "error: only one option is allowed at a time, unless otherwise specified\n");
         usage(argv[0]);
     }
@@ -185,8 +193,7 @@ int main (int argc, char *argv [])
 
     /* read response */
     memset (buffer,0x0,BUFLEN);
-    if (fgets(buffer, sizeof(buffer), sp) == NULL)
-        errexit("reading error", NULL);
+    if (fgets(buffer, sizeof(buffer), sp) == NULL) errexit("reading error", NULL);
     fprintf(stdout, "%s", buffer);
     while (fgets(buffer, sizeof(buffer), sp) != NULL) {
         fprintf(stdout, "%s", buffer);

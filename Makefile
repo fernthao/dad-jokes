@@ -6,7 +6,7 @@ TARGETS = proj5 proj5d
 
 # object files for each target
 OBJS_proj5 = proj5.o
-OBJS_proj5d = proj5d.o list.o random_joke.o create.o edit.o delete_joke.o
+OBJS_proj5d = proj5d.o list.o random_joke.o create.o edit.o delete_joke.o dadsay.o
 
 all: $(TARGETS)
 
@@ -18,6 +18,9 @@ proj5d: $(OBJS_proj5d)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
+
+dadsay.o: dadsay.c random_joke.h
+	$(CC) $(CFLAGS) -c dadsay.c
 
 clean:
 	rm -f $(TARGETS) *.o

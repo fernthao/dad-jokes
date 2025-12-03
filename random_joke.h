@@ -10,5 +10,6 @@
 #define GET_RANDOM_JOKE_H
 
 int random_joke(FILE* sp);
+int random_joke_index();
 
 #endif

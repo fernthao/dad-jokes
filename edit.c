@@ -6,6 +6,7 @@
 */
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "constants.h"
 
 int edit(char* joke_title, char* edited_joke) {
@@ -20,6 +21,33 @@ int edit(char* joke_title, char* edited_joke) {
         return 1;
     }
     fclose(fp);
+
+    // Count the number of lines in the joke
+    int line_count = 0;
+    int current_line_length = 0;
+    for (int i = 0; edited_joke[i] != '\0'; i++) {
+        if (edited_joke[i] == '\n') {
+            line_count++;
+            current_line_length = 0;
+        } else {
+            current_line_length++;
+            // Enforce JOKE_LINE_LENGTH constraint
+            if (current_line_length > JOKE_LINE_LENGTH) {
+                fprintf(stderr, "Line %d exceeds maximum length of %d characters", line_count + 1, JOKE_LINE_LENGTH);
+                return 1;
+            }
+        }
+    }
+    // Count the last line if it doesn't end with newline
+    if (strlen(edited_joke) > 0 && edited_joke[strlen(edited_joke) - 1] != '\n') {
+        line_count++;
+    }
+    
+    // Enforce MAX_LINES constraint
+    if (line_count > MAX_LINES) {
+        fprintf(stderr, "Joke exceeds maximum of %d lines (has %d lines)", MAX_LINES, line_count);
+        return 1;
+    }
 
     // Edit file
     fp = fopen(filepath, "w");

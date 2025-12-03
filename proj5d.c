@@ -13,6 +13,7 @@
 #include "create.h"
 #include "edit.h"
 #include "delete_joke.h"
+#include "dadsay.h"
 
 #define REQUIRED_ARGC 2
 #define PORT_POS 1
@@ -93,6 +94,9 @@ int main (int argc, char *argv [])
         }
         else if (strcmp(req, "RANDOM\n") == 0) {
             random_joke(csp);
+        }
+        else if (strcmp(req, "DADSAY\n") == 0) {
+            dadsay(csp);
         }
         else {
             char* method = strtok(req, " ");
