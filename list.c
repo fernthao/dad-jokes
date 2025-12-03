@@ -8,13 +8,14 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <string.h>
+#include "constants.h"
 
 int list(FILE* socket_pointer) {
     struct dirent* dir_entry;
     DIR* dir = opendir("./jokes");
 
     if (dir == NULL) {
-        fprintf(stderr, "Unable to open the jokes directory");
+        fputs("Unable to open the jokes directory", socket_pointer);
         return 1;
     }
 

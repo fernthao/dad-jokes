@@ -15,6 +15,7 @@
 #include "edit.h"
 #include "delete_joke.h"
 #include "dadsay.h"
+#include "constants.h"
 
 #define REQUIRED_ARGC 2
 #define PORT_POS 1
@@ -52,7 +53,7 @@ int errexit (char *format, char *arg)
 
 void parse_req(char* req, FILE* csp) {
     // request is on 1 single line
-    if (fgets(req, sizeof(req), csp) != NULL) {
+    if (fgets(req, BUFLEN, csp) != NULL) {
         // methods not requiring arguments
         if (strcmp(req, "LIST\n") == 0) {
             list(csp);
@@ -71,25 +72,17 @@ void parse_req(char* req, FILE* csp) {
             if (strcmp(method, "CREATE") == 0) {
                 char* title = strtok(NULL, "|");
                 char* msg = strtok(NULL, "\n");
-                if (create(title, msg) == 0) {
-                    fputs("Your joke is added!\n", csp);
-                } else {
-                    fputs("Error adding joke\n", csp);
-                }
+                create(title, msg, csp);
             }
             
             else if (strcmp(method, "EDIT") == 0) {
                 char* title = strtok(NULL, "|");
                 char* msg = strtok(NULL, "\n");
-                if (edit(title, msg) == 0) {
-                    fputs("Your joke is edited!\n", csp);
-                } else {
-                    fputs("Error editing joke\n", csp);
-                }
+                edit(title, msg, csp);
             }
             else if (strcmp(method, "DELETE") == 0) {
                 char* title = strtok(NULL, "\n");
-                delete_joke(title) == 0 ? fputs("Your joke is deleted!\n", csp) : fputs("Error deleting joke\n", csp);
+                delete_joke(title, csp);
             }
             else {
                 fputs("Error: request not recognized\n", csp);

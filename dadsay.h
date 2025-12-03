@@ -9,7 +9,7 @@
 #ifndef DAD_SAY_H
 #define DAD_SAY_H
 
-int dadsay_random_joke(char** lines, int* max_len);
+int dadsay_random_joke(char** lines, int* max_len, FILE* csp);
 int dadsay(FILE* csp);
 
 #endif

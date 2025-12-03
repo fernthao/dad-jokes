@@ -18,7 +18,7 @@ int random_joke_index() {
 
     if (dir == NULL) {
         fprintf(stderr, "Unable to open the jokes directory");
-        return 1;
+        return -1;
     }
 
     // Count number of files
@@ -32,6 +32,11 @@ int random_joke_index() {
     }
     closedir(dir);
 
+    // Return error if no joke files found
+    if (count == 0) {
+        return -1;
+    }
+
     // Random number between 1 and number of files
     srand(time(NULL));
     int random = rand() % count + 1;
@@ -43,11 +48,15 @@ int random_joke(FILE* socket_pointer) {
     struct dirent* dir_entry;
     DIR* dir = opendir(JOKES_DIR);
     if (dir == NULL) {
-        fprintf(stderr, "Unable to open the jokes directory");
+        fputs("Error: Unable to open the jokes directory\n", socket_pointer);
         return 1;
     }
 
     int random = random_joke_index();
+    if (random < 0) {
+        fputs("Error: Unable to get a random index in the jokes directory\n", socket_pointer);
+        return 1;
+    }
     int index = 1;
 
     // Print the file at that index
@@ -64,7 +73,7 @@ int random_joke(FILE* socket_pointer) {
             strcat(pathname, filename);
             FILE* joke = fopen(pathname, "r");
             if (joke == NULL) {
-                fprintf(stderr, "Unable to open file");
+                fputs("Unable to open file", socket_pointer);
                 return 1;
             }
             char buffer[JOKE_LINE_LENGTH];

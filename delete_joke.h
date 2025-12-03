@@ -7,6 +7,6 @@
 #ifndef DELETE_JOKE_H
 #define DELETE_JOKE_H
 
-int delete_joke(char* title);
+int delete_joke(char* title, FILE* csp);
 
 #endif

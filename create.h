@@ -7,6 +7,6 @@
 #ifndef CREATE_JOKE_H
 #define CREATE_JOKE_H
 
-int create(char* joke_title, char* joke);
+int create(char* joke_title, char* joke, FILE* csp);
 
 #endif

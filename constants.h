@@ -11,6 +11,6 @@
 #define JOKES_DIR "./jokes/"
 #define FILE_PATH_LEN 264 // title is 256 chars max, 8 chars for ./jokes/
 #define MAX_LINES 100 // maximum number of lines in joke file
-
+#define ERR_MSG_LEN 100
 
 #endif

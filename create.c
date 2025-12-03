@@ -10,14 +10,19 @@
 #include <string.h>
 #include "constants.h"
 
-int create(char* joke_title, char* joke) {
+int create(char* joke_title, char* joke, FILE* csp) {
+    if (joke_title == NULL || joke == NULL) {
+        fputs("Error: null joke title or joke content\n", csp);
+        return 1;
+    }
+    
     char filepath[FILE_PATH_LEN];
     snprintf(filepath, FILE_PATH_LEN, "%s%s", JOKES_DIR, joke_title);
     
     // Check if exist
     FILE * fp = fopen(filepath, "r");
     if ( fp != NULL) {
-        fprintf(stderr, "Joke title already exist, pick a different title");
+        fputs("Error: Joke title already exist, pick a different title\n", csp);
         fclose(fp);
         return 1;
     }
@@ -33,7 +38,9 @@ int create(char* joke_title, char* joke) {
             current_line_length++;
             // Enforce JOKE_LINE_LENGTH constraint
             if (current_line_length > JOKE_LINE_LENGTH) {
-                fprintf(stderr, "Line %d exceeds maximum length of %d characters", line_count + 1, JOKE_LINE_LENGTH);
+                char err[ERR_MSG_LEN];
+                snprintf(err, ERR_MSG_LEN, "Line %d exceeds maximum length of %d characters\n", line_count + 1, JOKE_LINE_LENGTH);
+                fputs(err, csp);
                 return 1;
             }
         }
@@ -45,29 +52,32 @@ int create(char* joke_title, char* joke) {
     
     // Enforce MAX_LINES constraint
     if (line_count > MAX_LINES) {
-        fprintf(stderr, "Joke exceeds maximum of %d lines (has %d lines)", MAX_LINES, line_count);
+        char err[ERR_MSG_LEN];
+        snprintf(err, ERR_MSG_LEN, "Joke exceeds maximum of %d lines (has %d lines)\n", MAX_LINES, line_count);
+        fputs(err, csp);
         return 1;
     }
 
     // Create file under ./jokes with the joke_title as the name
     fp = fopen(filepath, "w");
     if (fp == NULL) {
-        fprintf(stderr, "Error creating joke file");
+        fputs("Error creating joke file\n", csp);
         return 1;
     }
     
     // Write the joke content to the file
     if (fprintf(fp, "%s", joke) < 0) {
-        fprintf(stderr, "Error writing to joke file");
+        fputs("Error writing to joke file\n", csp);
         fclose(fp);
         return 1;
     }
     
     // Close the file
     if (fclose(fp) != 0) {
-        fprintf(stderr, "Error closing joke file");
+        fputs("Error closing joke file\n", csp);
         return 1;
     }
     
+    fputs("Joke added!\n", csp);
     return 0;
 }

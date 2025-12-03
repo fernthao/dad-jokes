@@ -19,14 +19,14 @@
     calculate max line length,
     and return the number of lines read 
 */
-int dadsay_random_joke(char** lines, int* max_len) {
+int dadsay_random_joke(char** lines, int* max_len, FILE* csp) {
     *max_len = 0;
     int line_count = 0;
 
     struct dirent* dir_entry;
     DIR* dir = opendir(JOKES_DIR);
     if (dir == NULL) {
-        fprintf(stderr, "Unable to open the jokes directory");
+        fputs("Unable to open the jokes directory\n", csp);
         return -1;
     }
 
@@ -49,7 +49,7 @@ int dadsay_random_joke(char** lines, int* max_len) {
             strcat(pathname, filename);
             FILE* joke = fopen(pathname, "r");
             if (joke == NULL) {
-                fprintf(stderr, "Unable to open file");
+                fputs("Unable to open file\n", csp);
                 closedir(dir);
                 return -1;
             }
@@ -66,7 +66,7 @@ int dadsay_random_joke(char** lines, int* max_len) {
                 // Allocate memory and copy the line to array of lines
                 lines[line_count] = malloc(len + 1);
                 if (lines[line_count] == NULL) {
-                    fprintf(stderr, "Memory allocation failed");
+                    fputs("Memory allocation failed\n", csp);
                     fclose(joke);
                     closedir(dir);
                     return -1;
@@ -91,9 +91,9 @@ int dadsay_random_joke(char** lines, int* max_len) {
 int dadsay(FILE* csp) {
     char* lines[MAX_LINES];
     int max_len = 0;
-    int line_count = dadsay_random_joke(lines, &max_len);
+    int line_count = dadsay_random_joke(lines, &max_len, csp);
     if (line_count == -1) {
-        fprintf(stderr, "Error getting random joke for dadsay");
+        fputs("Error getting random joke for dadsay\n", csp);
         return 1;
     }
     

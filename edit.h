@@ -7,6 +7,6 @@
 #ifndef EDIT_JOKE_H
 #define EDIT_JOKE_H
 
-int edit(char* joke_title, char* edited_joke);
+int edit(char* joke_title, char* edited_joke, FILE* csp);
 
 #endif
