@@ -147,6 +147,9 @@ int main (int argc, char *argv [])
     if (cmd_line_flags == ARG_LIST) {
         snprintf(req, sizeof(req), "LIST\n");
     // create
+    } else if (cmd_line_flags == (ARG_CREATE)) {
+        fprintf(stderr, "error: create mode requires a message\n");
+        usage(argv[0]);
     } else if (cmd_line_flags == (ARG_CREATE | ARG_MESSAGE)) {
         if (title == NULL || joke == NULL) {
             fprintf(stderr, "error: title and joke must be specified with -c and -m\n");
@@ -157,6 +160,9 @@ int main (int argc, char *argv [])
     } else if (cmd_line_flags == ARG_GET) {
         snprintf(req, sizeof(req), "RANDOM\n");
     // edit
+    } else if (cmd_line_flags == (ARG_EDIT)) {
+        fprintf(stderr, "error: edit mode requires a message\n");
+        usage(argv[0]);
     } else if (cmd_line_flags == (ARG_EDIT | ARG_MESSAGE)) {
         if (title == NULL || joke == NULL) {
             fprintf(stderr, "error: title and joke must be specified with -e and -m\n");
@@ -175,7 +181,7 @@ int main (int argc, char *argv [])
     
     // Error if not one of the specified operations
     else {
-        fprintf(stderr, "error: only one option is allowed at a time, unless otherwise specified\n");
+        fprintf(stderr, "error: only one option allowed at a time\n");
         usage(argv[0]);
     }
 
