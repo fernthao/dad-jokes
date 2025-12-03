@@ -48,13 +48,13 @@ int random_joke(FILE* socket_pointer) {
     struct dirent* dir_entry;
     DIR* dir = opendir(JOKES_DIR);
     if (dir == NULL) {
-        fputs("Error: Unable to open the jokes directory\n", socket_pointer);
+        fputs("Error: Unable to open the jokes directory. Have you created any joke?\n", socket_pointer);
         return 1;
     }
 
     int random = random_joke_index();
     if (random < 0) {
-        fputs("Error: Unable to get a random index in the jokes directory\n", socket_pointer);
+        fputs("Error: Empty jokes directory. Add some jokes!\n", socket_pointer);
         return 1;
     }
     int index = 1;

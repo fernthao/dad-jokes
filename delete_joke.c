@@ -22,7 +22,7 @@ int delete_joke(char* title, FILE* csp) {
         fputs("Joke deleted!\n", csp);
         return 0;
     } else {
-        fputs("Error deleting joke\n", csp);
+        fputs("Error deleting joke. Ensure that the joke exist, and input the correct title\n", csp);
         return 1;
     }
 }

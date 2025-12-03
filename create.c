@@ -8,12 +8,23 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include "constants.h"
 
 int create(char* joke_title, char* joke, FILE* csp) {
     if (joke_title == NULL || joke == NULL) {
         fputs("Error: null joke title or joke content\n", csp);
         return 1;
+    }
+    
+    // Create jokes directory if it doesn't exist
+    struct stat st = {0};
+    if (stat(JOKES_DIR, &st) == -1) {
+        if (mkdir(JOKES_DIR, 0755) != 0) {
+            fputs("Error: Could not create jokes directory\n", csp);
+            return 1;
+        }
     }
     
     char filepath[FILE_PATH_LEN];

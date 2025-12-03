@@ -26,11 +26,15 @@ int dadsay_random_joke(char** lines, int* max_len, FILE* csp) {
     struct dirent* dir_entry;
     DIR* dir = opendir(JOKES_DIR);
     if (dir == NULL) {
-        fputs("Unable to open the jokes directory\n", csp);
+        fputs("Error: Unable to open the jokes directory. Have you created any joke?\n", csp);
         return -1;
     }
 
     int random = random_joke_index();
+    if (random < 0) {
+        fputs("Error: Empty jokes directory. Add some jokes!\n", csp);
+        return -1;
+    }
     int index = 1;
 
     // Find the file at that index
@@ -93,7 +97,6 @@ int dadsay(FILE* csp) {
     int max_len = 0;
     int line_count = dadsay_random_joke(lines, &max_len, csp);
     if (line_count == -1) {
-        fputs("Error getting random joke for dadsay\n", csp);
         return 1;
     }
     
