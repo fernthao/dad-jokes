@@ -77,6 +77,6 @@ int edit(char* joke_title, char* edited_joke, FILE* csp) {
         return 1;
     }
     
-    fputs("Joke edited!", csp);
+    fputs("Joke edited!\n", csp);
     return 0;
 }
