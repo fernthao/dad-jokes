@@ -1,6 +1,6 @@
 /* Name: Thao Nguyen 
  Case Network ID: ttn60
- The filename: get.c
+ The filename: random_joke.c
  Date created: Nov 26, 2025
  Description: Print 1 random joke
 */

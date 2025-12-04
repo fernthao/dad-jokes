@@ -155,7 +155,7 @@ int main (int argc, char *argv [])
             fprintf(stderr, "error: title and joke must be specified with -c and -m\n");
             usage(argv[0]);
         }
-        snprintf(req, sizeof(req), "CREATE %s|%s\n", title, joke);
+        snprintf(req, sizeof(req), "CREATE\n%s\n%s\n", title, joke);
     // get random
     } else if (cmd_line_flags == ARG_GET) {
         snprintf(req, sizeof(req), "RANDOM\n");
@@ -168,14 +168,14 @@ int main (int argc, char *argv [])
             fprintf(stderr, "error: title and joke must be specified with -e and -m\n");
             usage(argv[0]);
         }
-        snprintf(req, sizeof(req), "EDIT %s|%s\n", title, joke);
+        snprintf(req, sizeof(req), "EDIT\n%s\n%s\n", title, joke);
     // delete
     } else if (cmd_line_flags == ARG_DELETE) {
         if (title == NULL) {
             fprintf(stderr, "error: title must be specified with -d\n");
             usage(argv[0]);
         }
-        snprintf(req, sizeof(req), "DELETE %s\n", title);
+        snprintf(req, sizeof(req), "DELETE\n%s\n", title);
     // dadsay
     } else if (cmd_line_flags == ARG_DADSAY) snprintf(req, sizeof(req), "DADSAY\n");
     

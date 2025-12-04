@@ -51,48 +51,72 @@ int errexit (char *format, char *arg)
     exit (ERROR);
 }
 
-void parse_req(char* req, FILE* csp) {
-    // request is on 1 single line
-    if (fgets(req, BUFLEN, csp) != NULL) {
-        // methods not requiring arguments
-        if (strcmp(req, "LIST\n") == 0) {
-            list(csp);
+void parse_title_msg(char* req, char* title, char* msg, FILE* csp) {
+    // next line: title
+        memset(req, 0x0, TITLE_LEN);
+        if (fgets(req, TITLE_LEN, csp) == NULL) fprintf(stderr, "missing title\n");
+        int lastchar = strlen(req) - 1;
+        if (req[lastchar] == '\n') {
+            req[lastchar] = '\0';
         }
-        else if (strcmp(req, "RANDOM\n") == 0) {
-            random_joke(csp);
-        }
-        else if (strcmp(req, "DADSAY\n") == 0) {
-            dadsay(csp);
-        }
+        strcpy(title, req);
 
-        // methods requiring arguments (separated with a space)
-        else {
-            char* method = strtok(req, " ");
-            
-            if (strcmp(method, "CREATE") == 0) {
-                char* title = strtok(NULL, "|");
-                char* msg = strtok(NULL, "\n");
-                create(title, msg, csp);
-            }
-            
-            else if (strcmp(method, "EDIT") == 0) {
-                char* title = strtok(NULL, "|");
-                char* msg = strtok(NULL, "\n");
-                edit(title, msg, csp);
-            }
-            else if (strcmp(method, "DELETE") == 0) {
-                char* title = strtok(NULL, "\n");
-                delete_joke(title, csp);
-            }
-            else {
-                fputs("Error: request not recognized\n", csp);
-                fputs("Accepted requests: LIST, RANDOM, CREATE, EDIT, DELETE\n", csp);
-            }
+        // lines after that: joke content
+        memset(msg, 0x0, MAX_LINES*JOKE_LINE_LENGTH);
+        char line[JOKE_LINE_LENGTH];
+        while (fgets(line, JOKE_LINE_LENGTH, csp) != NULL) {
+            strcat(msg, line);
         }
-        fflush(csp);
-    } else {
-        fprintf(stderr, "no request or read error\n");
+}
+
+void parse_req(char* req, FILE* csp) {
+    // get first line: should contain method
+    if (fgets(req, BUFLEN, csp) == NULL) fprintf(stderr, "no request or read error\n");
+
+    // methods not requiring arguments
+    if (strcmp(req, "LIST\n") == 0) {
+        list(csp);
     }
+    else if (strcmp(req, "RANDOM\n") == 0) {
+        random_joke(csp);
+    }
+    else if (strcmp(req, "DADSAY\n") == 0) {
+        dadsay(csp);
+    }
+    // methods requiring arguments 
+    else if (strcmp(req, "CREATE\n") == 0) {
+        char title[TITLE_LEN];
+        char msg[MAX_LINES*JOKE_LINE_LENGTH];
+        printf(req);
+        printf("\n");
+
+        parse_title_msg(req, title, msg, csp);
+        create(title, msg, csp);
+    }
+    else if (strcmp(req, "EDIT\n") == 0) {
+        char title[TITLE_LEN];
+        char msg[MAX_LINES*JOKE_LINE_LENGTH];
+
+        parse_title_msg(req, title, msg, csp);
+        edit(title, msg, csp);
+    }
+    else if (strcmp(req, "DELETE\n") == 0) {
+        // next line: title
+        memset(req, 0x0, TITLE_LEN);
+        if (fgets(req, TITLE_LEN, csp) == NULL) fprintf(stderr, "missing title\n");
+        // remove trailing newline
+        int lastchar = strlen(req) - 1;
+        if (req[lastchar] == '\n') {
+            req[lastchar] = '\0';
+        }
+        delete_joke(req, csp);
+    }
+    else {
+        fputs("Error: request not recognized\n", csp);
+        fputs("Accepted requests: LIST, RANDOM, CREATE, EDIT, DELETE\n", csp);
+        
+    }
+    fflush(csp);
 }
 
 int main (int argc, char *argv [])
