@@ -15,8 +15,8 @@ int list(FILE* socket_pointer) {
     DIR* dir = opendir("./jokes");
 
     if (dir == NULL) {
-        fputs("Error: Unable to open the jokes directory. Have you created any joke?", socket_pointer);
-        return 1;
+        fputs("Error: Empty jokes database. Add some jokes!", socket_pointer);
+        return ERROR;
     }
 
     while ((dir_entry = readdir(dir)) != NULL) {

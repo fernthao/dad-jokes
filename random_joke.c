@@ -2,7 +2,7 @@
  Case Network ID: ttn60
  The filename: random_joke.c
  Date created: Nov 26, 2025
- Description: Print 1 random joke
+ Description: Print a random joke
 */
 #include <stdlib.h>
 #include <stdio.h>
@@ -11,6 +11,7 @@
 #include <time.h>
 #include "constants.h"
 
+/* Return a random index corresponding to a file in the jokes directory, or -1 if dir empty or not found */
 int random_joke_index() {
     struct dirent* dir_entry;
     DIR* dir = opendir(JOKES_DIR);
@@ -18,7 +19,7 @@ int random_joke_index() {
 
     if (dir == NULL) {
         fprintf(stderr, "Unable to open the jokes directory");
-        return -1;
+        return ERROR;
     }
 
     // Count number of files
@@ -34,7 +35,7 @@ int random_joke_index() {
 
     // Return error if no joke files found
     if (count == 0) {
-        return -1;
+        return ERROR;
     }
 
     // Random number between 1 and number of files
@@ -47,16 +48,12 @@ int random_joke_index() {
 int random_joke(FILE* socket_pointer) {
     struct dirent* dir_entry;
     DIR* dir = opendir(JOKES_DIR);
-    if (dir == NULL) {
-        fputs("Error: Unable to open the jokes directory. Have you created any joke?\n", socket_pointer);
-        return 1;
+    int random = random_joke_index();
+    if (dir == NULL || random < 0) {
+        fputs("Error: Empty jokes database. Add some jokes!\n", socket_pointer);
+        return ERROR;
     }
 
-    int random = random_joke_index();
-    if (random < 0) {
-        fputs("Error: Empty jokes directory. Add some jokes!\n", socket_pointer);
-        return 1;
-    }
     int index = 1;
 
     // Print the file at that index
@@ -73,8 +70,8 @@ int random_joke(FILE* socket_pointer) {
             strcat(pathname, filename);
             FILE* joke = fopen(pathname, "r");
             if (joke == NULL) {
-                fputs("Unable to open file", socket_pointer);
-                return 1;
+                fputs("Error: Unable to open file", socket_pointer);
+                return ERROR;
             }
             char buffer[JOKE_LINE_LENGTH];
             while (fgets(buffer, JOKE_LINE_LENGTH, joke) != NULL) {

@@ -18,6 +18,7 @@
 /* fill lines array with each line in a random joke, 
     calculate max line length,
     and return the number of lines read 
+    or -1 if error
 */
 int dadsay_random_joke(char** lines, int* max_len, FILE* csp) {
     *max_len = 0;
@@ -26,14 +27,14 @@ int dadsay_random_joke(char** lines, int* max_len, FILE* csp) {
     struct dirent* dir_entry;
     DIR* dir = opendir(JOKES_DIR);
     if (dir == NULL) {
-        fputs("Error: Unable to open the jokes directory. Have you created any joke?\n", csp);
-        return -1;
+        fputs("Error: Empty jokes database. Add some jokes!\n", csp);
+        return ERROR;
     }
 
     int random = random_joke_index();
     if (random < 0) {
-        fputs("Error: Empty jokes directory. Add some jokes!\n", csp);
-        return -1;
+        fputs("Error: Empty jokes database. Add some jokes!\n", csp);
+        return ERROR;
     }
     int index = 1;
 
@@ -55,7 +56,7 @@ int dadsay_random_joke(char** lines, int* max_len, FILE* csp) {
             if (joke == NULL) {
                 fputs("Unable to open file\n", csp);
                 closedir(dir);
-                return -1;
+                return ERROR;
             }
             // Get each line and add to the lines array
             char buffer[JOKE_LINE_LENGTH];
@@ -73,7 +74,7 @@ int dadsay_random_joke(char** lines, int* max_len, FILE* csp) {
                     fputs("Memory allocation failed\n", csp);
                     fclose(joke);
                     closedir(dir);
-                    return -1;
+                    return ERROR;
                 }
                 strcpy(lines[line_count], buffer);
                 
@@ -91,13 +92,15 @@ int dadsay_random_joke(char** lines, int* max_len, FILE* csp) {
     return line_count;
 }
 
-// Writing to client socket pointer
+/*
+    have winking smiley face say a random joke
+*/
 int dadsay(FILE* csp) {
     char* lines[MAX_LINES];
     int max_len = 0;
     int line_count = dadsay_random_joke(lines, &max_len, csp);
     if (line_count == -1) {
-        return 1;
+        return ERROR;
     }
     
     // top bar

@@ -1,6 +1,6 @@
 /* Name: Thao Nguyen 
  Case Network ID: ttn60
- The filename: sockets.c
+ The filename: proj5.c
  Date created: Nov 20, 2025
  Description: Implementation of the client
 */
@@ -14,9 +14,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <getopt.h>
+#include "constants.h"
 
-#define ERROR 1
-#define PROTOCOL "tcp"
 #define BUFLEN 1024
 #define ARG_LIST    0x1
 #define ARG_CREATE  0x2
@@ -155,7 +154,7 @@ int main (int argc, char *argv [])
             fprintf(stderr, "error: title and joke must be specified with -c and -m\n");
             usage(argv[0]);
         }
-        snprintf(req, sizeof(req), "CREATE\n%s\n%s\n", title, joke);
+        snprintf(req, sizeof(req), "CREATE\n%s\n%s\n%s", title, joke, JOKE_END);
     // get random
     } else if (cmd_line_flags == ARG_GET) {
         snprintf(req, sizeof(req), "RANDOM\n");
@@ -168,7 +167,7 @@ int main (int argc, char *argv [])
             fprintf(stderr, "error: title and joke must be specified with -e and -m\n");
             usage(argv[0]);
         }
-        snprintf(req, sizeof(req), "EDIT\n%s\n%s\n", title, joke);
+        snprintf(req, sizeof(req), "EDIT\n%s\n%s\n%s", title, joke, JOKE_END);
     // delete
     } else if (cmd_line_flags == ARG_DELETE) {
         if (title == NULL) {
