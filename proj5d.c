@@ -56,7 +56,7 @@ void parse_title_msg(char* req, char* title, char* msg, FILE* csp) {
     // first line: title
     memset(req, 0x0, TITLE_LEN);
     if (fgets(req, TITLE_LEN, csp) == NULL) fprintf(stderr, "missing title\n");
-    printf(req);
+    printf("%s", req);
     int lastchar = strlen(req) - 1;
     if (req[lastchar] == '\n') {
         req[lastchar] = '\0';
@@ -67,13 +67,13 @@ void parse_title_msg(char* req, char* title, char* msg, FILE* csp) {
     strcpy(msg, "\0");
     char line[JOKE_LINE_LENGTH];
     while (fgets(line, JOKE_LINE_LENGTH, csp) != NULL && strcmp(line,JOKE_END) !=0) {
-        printf(line);
+        printf("%s", line);
         // Add each line to the joke content string
         strcat(msg, line); 
 
         memset(line, 0x0, sizeof(line));
     }
-    printf(line);
+    printf("%s", line);
     fflush(csp);
 }
 
@@ -127,7 +127,7 @@ void parse_req(char* req, FILE* csp) {
         // next line: title
         memset(req, 0x0, TITLE_LEN);
         if (fgets(req, TITLE_LEN, csp) == NULL) fprintf(stderr, "missing title\n");
-        printf(req);
+        printf("%s", req);
         // remove trailing newline
         int lastchar = strlen(req) - 1;
         if (req[lastchar] == '\n') {
